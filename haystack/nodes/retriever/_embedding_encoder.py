@@ -400,17 +400,20 @@ class _OpenAIEmbeddingEncoder(_BaseEmbeddingEncoder):
         model_class: str = next(
             (m for m in ["ada", "babbage", "davinci", "curie"] if m in retriever.embedding_model), "babbage"
         )
-        self.query_model_encoder_engine = f"text-search-{model_class}-query-001"
-        self.doc_model_encoder_engine = f"text-search-{model_class}-doc-001"
-        self.tokenizer = AutoTokenizer.from_pretrained("gpt2")
+        self.query_model_encoder_engine = f"code-search-ada-text-001"
+        self.doc_model_encoder_engine = f"code-search-ada-code-001"
+
+        print('Loaded Codex Models')
+        #self.tokenizer = AutoTokenizer.from_pretrained("gpt2")
 
     def _ensure_text_limit(self, text: str) -> str:
         """
         Ensure that length of the text is within the maximum length of the model.
         OpenAI embedding models have a limit of 2048 tokens
         """
-        tokenized_payload = self.tokenizer(text)
-        return self.tokenizer.decode(tokenized_payload["input_ids"][: self.max_seq_len])
+        #tokenized_payload = self.tokenizer(text)
+        #return self.tokenizer.decode(tokenized_payload["input_ids"][: self.max_seq_len])
+        return text
 
     @retry_with_exponential_backoff(backoff_in_seconds=10, max_retries=5)
     def embed(self, model: str, text: List[str]) -> np.ndarray:
